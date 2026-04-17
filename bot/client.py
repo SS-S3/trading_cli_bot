@@ -28,12 +28,11 @@ class BinanceFuturesClient:
             # Initialize the client with testnet=True to ensure correct internal URL and signing configuration
             self.client = Client(self.api_key, self.api_secret, testnet=True)
             
-            # If the user specifically wants the Demo endpoint (different from standard Testnet)
-            # we override it here, but testnet=True is still crucial for internal library behavior.
-            if self.BASE_URL:
-                self.client.FUTURES_URL = f"{self.BASE_URL.rstrip('/')}/fapi"
+            # Use the Demo Testnet URL (this is the one for the Binance Futures Testnet UI)
+            # Standard testnet URL in python-binance is often different from the Demo Trading one.
+            self.client.FUTURES_URL = os.getenv("BINANCE_FUTURES_URL", "https://demo-fapi.binance.com/fapi")
             
-            logger.info(f"Successfully initialized Binance Futures Demo client using {self.client.FUTURES_URL}")
+            logger.info(f"Binance Futures Client initialized. Using URL: {self.client.FUTURES_URL}")
         except Exception as e:
             logger.error(f"Failed to initialize Binance client: {str(e)}")
             raise
